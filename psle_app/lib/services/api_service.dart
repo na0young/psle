@@ -7,7 +7,7 @@ import 'package:psle_app/models/esm_test_log.dart';
 
 class ApiService {
   final dio = Dio(BaseOptions(
-      baseUrl: 'http://210.125.94.114:8080/PSLE/',
+      baseUrl: 'http://210.125.94.106:8080/PSLE-0.0.1-SNAPSHOT/',
       headers: {
         "Content-Type": "application/json;charset=UTF-8",
         "Accept": "application/json",

@@ -44,7 +44,7 @@ class _WebviewScreenState extends State<WebviewScreen> {
       // URL 로드
       controller.loadRequest(
         Uri.parse(
-            'http://210.125.94.114:8080/PSLE/doLogin?userid=$userId&userpw=$userPw'),
+            'http://210.125.94.106:8080/PSLE-0.0.1-SNAPSHOT/doLogin?userid=$userId&userpw=$userPw'),
       );
     } else {
       setState(() {

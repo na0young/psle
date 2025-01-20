@@ -1,7 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:psle_app/screens/home_screen.dart';
 import 'package:psle_app/services/api_service.dart';
+import 'package:psle_app/services/firebase_messaging_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,6 +33,10 @@ class _LoginScreenState extends State<LoginScreen> {
       await prefs.setString('userName', user.name!);
       await prefs.setStringList('alarmTimes', user.alarmTimes ?? []);
       await prefs.setBool('isLoggedIn', true);
+
+      // FCM 초기화, 토큰관리
+      final FirebaseMessagingService fcmService = FirebaseMessagingService();
+      await fcmService.initialize();
 
       if (!mounted) return;
       Navigator.pushReplacement(
