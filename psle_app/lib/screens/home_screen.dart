@@ -15,7 +15,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String userName = '';
   String lastRecordTime = '최근 기록 없음';
   final ApiService apiService = ApiService();
-  //final InspectService inspectService = InspectService();
 
   @override
   void initState() {
@@ -148,12 +147,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
                     )),
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => const WebviewScreen()),
                   );
+                  //webview에서 반환한 갱신 플래그가 true -> 기록 시간 갱신
+                  if (result == true) {
+                    await _loadLastRecordTime();
+                  }
                 },
                 child: const Text(
                   '기록하러 가기',

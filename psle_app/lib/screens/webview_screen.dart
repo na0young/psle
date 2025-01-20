@@ -66,16 +66,21 @@ class _WebviewScreenState extends State<WebviewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          '정서 반복 기록',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+          backgroundColor: Colors.white,
+          title: const Text(
+            '정서 반복 기록',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
-        ),
-        centerTitle: true,
-      ),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+          )),
       body: WebViewWidget(controller: controller),
     );
   }
