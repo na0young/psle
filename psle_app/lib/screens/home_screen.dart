@@ -140,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 100), // Box와 기록하러가기 버튼 사이 여백
             SizedBox(
               width: double.infinity,
-              height: 45,
+              height: 60,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 255, 111, 111),
@@ -162,30 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   '기록하러 가기',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8), // 기록하러 가기 버튼과 동기화 버튼 사이 여백
-            SizedBox(
-              width: double.infinity,
-              height: 45,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 255, 111, 111),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                onPressed: () {},
-                //onPressed: _syncAlarms,
-                child: const Text(
-                  '알람 시간 동기화',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
