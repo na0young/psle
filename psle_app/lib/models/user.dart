@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
 
 class User {
   int? id; // 사용자 식별 아이디
@@ -30,16 +34,46 @@ class User {
       };
 
   Future<void> logout() async {
-    // 로그아웃을 위한 앱내변수 삭제
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // sharedPreference에서 토큰 가져오기
+    String? fcmToken = prefs.getString('fcmToken');
+    int? userId = prefs.getInt('id');
+    // 서버에서 FCM 토큰 삭제
+    if (fcmToken != null && userId != null) {
+      await deleteTokenFromServer(userId, fcmToken);
+    }
+    // Firebase에서 FCM 토큰 삭제
+    await FirebaseMessaging.instance.deleteToken();
 
+    // 로그아웃을 위한 앱내변수 삭제
     await prefs.setBool('isLoggedIn', false);
     await prefs.remove('loginId');
     await prefs.remove('password');
     await prefs.remove('id');
     await prefs.remove('name');
     await prefs.remove('lastRecordTime');
-    this.loginId = null;
-    this.password = null;
+    await prefs.remove('fcmToken');
+    loginId = null;
+    password = null;
+  }
+
+  Future<void> deleteTokenFromServer(int userId, String fcmToken) async {
+    final url =
+        Uri.parse("http://210.125.94.106:8080/PSLE-0.0.1-SNAPSHOT/deleteToken");
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'userId': userId, 'fcmToken': fcmToken}),
+      );
+
+      if (response.statusCode == 200) {
+        print('FCM 토큰 삭제 성공');
+      } else {
+        print('FCM 토큰 삭제 실패: ${response.body}');
+      }
+    } catch (e) {
+      print('FCM 토큰 삭제 중 오류 발생: $e');
+    }
   }
 }
