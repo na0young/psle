@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:psle_app/screens/webview_screen.dart';
 import 'package:psle_app/screens/login_screen.dart';
 import 'package:psle_app/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,12 +57,49 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
+    // 1. FCM 토큰 가져오기
+    // sharedPreference에서 토큰 가져오기
+    String? fcmToken = prefs.getString('fcmToken');
+    int? userId = prefs.getInt('userId');
+
+    // 서버에서 FCM 토큰 삭제
+    if (fcmToken != null && userId != null) {
+      await deleteTokenFromServer(fcmToken, userId);
+    }
+    // 2. Firebase에서 FCM 토큰 삭제
+    await FirebaseMessaging.instance.deleteToken();
+    // 3. SharedPreference 데이터 삭제
     await prefs.clear();
+    print('사용자 로그아웃 완료');
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
+  }
+
+  Future<void> deleteTokenFromServer(String token, int userId) async {
+    try {
+      final url = Uri.parse(
+          "http://210.125.94.106:8080/PSLE-0.0.1-SNAPSHOT/deleteToken");
+      print("서버에 FCM 토큰 삭제 요청 보냄: userId = $userId, fcmToken = $token");
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          'userId': userId,
+          'fcmToken': token,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('FCM 토큰 삭제 성공: ${response.body}');
+      } else {
+        print('FCM 토큰 삭제 실패: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      print('FCM 토큰 삭제 중 오류 발생: $e');
+    }
   }
 
   Future<void> _refreshLastRecordTime() async {
