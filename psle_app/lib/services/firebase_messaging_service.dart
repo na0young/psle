@@ -45,17 +45,49 @@ class FirebaseMessagingService {
       return;
     }
 
-    // 토큰이 다르면 SharedPreferences와 서버에 저장
-    if (oldToken == null || oldToken != newToken) {
-      print('토큰 변경 감지. 서버와 SharedPreferences에 업데이트.');
-
-      // SharedPreferences에 저장
+    // 기존 토큰이 없음
+    if (oldToken == null) {
+      print("기존 토큰이 없습니다. 새 기기에서 FCM 토큰 저장");
       await prefs.setString('fcmToken', newToken);
-
       // 서버로 전송
       await _sendTokenToServer(newToken, userId);
-    } else {
+    }
+    // 기존 토큰과 앱진입시 발급받은 토큰이 다름.
+    else if (oldToken != null && oldToken != newToken) {
+      print('토큰 변경 감지. 서버에서 이전 토큰 삭제 후 새 토큰 저장.');
+      // SharedPreferences에 저장
+      await deleteTokenFromServer(oldToken, userId);
+      await prefs.setString('fcmToken', newToken);
+      await _sendTokenToServer(newToken, userId);
+    }
+    // 기존 토큰과 앱진입시 발급받은 토큰이 다름.
+    else {
       print('기존 토큰과 동일. 서버 전송 생략.');
+    }
+  }
+
+  // 서버에서 특정 토큰 삭제
+  Future<void> deleteTokenFromServer(String token, int userId) async {
+    try {
+      final url = Uri.parse(
+          "http://210.125.94.106:8080/PSLE-0.0.1-SNAPSHOT/deleteToken");
+      print("서버에 FCM 토큰 삭제 요청 보냄: userId = $userId, fcmToken = $token");
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          'userId': userId,
+          'fcmToken': token,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('FCM 토큰 삭제 성공: ${response.body}');
+      } else {
+        print('FCM 토큰 삭제 실패: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      print('FCM 토큰 삭제 중 오류 발생: $e');
     }
   }
 

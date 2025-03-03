@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:psle_app/screens/webview_screen.dart';
 import 'package:psle_app/screens/login_screen.dart';
 import 'package:psle_app/services/api_service.dart';
+import 'package:psle_app/services/firebase_messaging_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +14,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final FirebaseMessagingService fcmService = FirebaseMessagingService();
+
   String userName = '';
   String lastRecordTime = '최근 기록 없음';
   final ApiService apiService = ApiService();
@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadUserData();
     _loadLastRecordTime();
+    fcmService.initialize();
   }
 
   Future<void> _loadUserData() async {
@@ -57,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
+    final FirebaseMessagingService fcmService = FirebaseMessagingService();
     // 1. FCM 토큰 가져오기
     // sharedPreference에서 토큰 가져오기
     String? fcmToken = prefs.getString('fcmToken');
@@ -64,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // 서버에서 FCM 토큰 삭제
     if (fcmToken != null && userId != null) {
-      await deleteTokenFromServer(fcmToken, userId);
+      await fcmService.deleteTokenFromServer(fcmToken, userId);
     }
     // 2. Firebase에서 FCM 토큰 삭제
     await FirebaseMessaging.instance.deleteToken();
@@ -76,37 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
-  }
-
-  Future<void> deleteTokenFromServer(String token, int userId) async {
-    try {
-      final url = Uri.parse(
-          "http://210.125.94.106:8080/PSLE-0.0.1-SNAPSHOT/deleteToken");
-      print("서버에 FCM 토큰 삭제 요청 보냄: userId = $userId, fcmToken = $token");
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          'userId': userId,
-          'fcmToken': token,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        print('FCM 토큰 삭제 성공: ${response.body}');
-      } else {
-        print('FCM 토큰 삭제 실패: ${response.statusCode} ${response.body}');
-      }
-    } catch (e) {
-      print('FCM 토큰 삭제 중 오류 발생: $e');
-    }
-  }
-
-  Future<void> _refreshLastRecordTime() async {
-    setState(() {
-      lastRecordTime = '업데이트 중 ... ';
-    });
-    await _loadLastRecordTime();
   }
 
   @override
