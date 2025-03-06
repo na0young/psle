@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:psle_app/screens/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:logger/logger.dart';
@@ -56,6 +57,15 @@ class _WebviewScreenState extends State<WebviewScreen> {
     }
   }
 
+  // 뒤로 가기 버튼 클릭 시 홈스크린으로 이동
+  void _goHomeScreen() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (userId == null || userPw == null) {
@@ -68,21 +78,20 @@ class _WebviewScreenState extends State<WebviewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: const Text(
-            '정서 반복 기록',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+        backgroundColor: Colors.white,
+        title: const Text(
+          '정서 반복 기록',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-          )),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: _goHomeScreen,
+        ),
+      ),
       body: WebViewWidget(controller: controller),
     );
   }
