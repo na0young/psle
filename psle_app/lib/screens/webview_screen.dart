@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:logger/logger.dart';
 
 class WebviewScreen extends StatefulWidget {
   const WebviewScreen({super.key});
@@ -10,6 +11,7 @@ class WebviewScreen extends StatefulWidget {
 }
 
 class _WebviewScreenState extends State<WebviewScreen> {
+  final Logger _logger = Logger();
   late final WebViewController controller; // WebViewController 선언
   String? userId;
   String? userPw;
@@ -23,7 +25,7 @@ class _WebviewScreenState extends State<WebviewScreen> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onWebResourceError: (error) {
-            print('WebView error: ${error.description}');
+            _logger.i('WebView error: ${error.description}');
           },
         ),
       );

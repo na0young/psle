@@ -5,6 +5,7 @@ import 'package:psle_app/services/api_service.dart';
 import 'package:psle_app/services/firebase_messaging_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:logger/logger.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final Logger _logger = Logger();
   final FirebaseMessagingService fcmService = FirebaseMessagingService();
 
   String userName = '';
@@ -72,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await FirebaseMessaging.instance.deleteToken();
     // 3. SharedPreference 데이터 삭제
     await prefs.clear();
-    print('사용자 로그아웃 완료');
+    _logger.i('사용자 로그아웃 완료');
     if (!mounted) return;
     Navigator.pushReplacement(
       context,

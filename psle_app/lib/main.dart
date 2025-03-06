@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:psle_app/screens/home_screen.dart';
 import 'package:psle_app/screens/login_screen.dart';
-import 'package:psle_app/services/firebase_messaging_service.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   // 비동기 작업들을 초기화 하기 위해 Flutter 프레임워크 초기화
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +22,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   Future<bool> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PSLE',
+      navigatorKey: navigatorKey,
       home: FutureBuilder<bool>(
         future: _checkLoginStatus(),
         builder: (context, snapshot) {
