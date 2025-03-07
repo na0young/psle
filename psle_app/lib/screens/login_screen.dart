@@ -20,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     try {
+      // 로그인 버튼 누르면 키보드 내리기
+      FocusScope.of(context).unfocus();
       final user = await apiService.postUser(
         idController.text,
         passwordController.text,
@@ -54,9 +56,17 @@ class _LoginScreenState extends State<LoginScreen> {
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color.fromARGB(255, 255, 111, 111),
+        elevation: 0,
+        margin: const EdgeInsets.all(16),
         duration: Duration(seconds: 3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
