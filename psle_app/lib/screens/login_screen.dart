@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:psle_app/screens/home_screen.dart';
 import 'package:psle_app/services/api_service.dart';
@@ -40,11 +42,23 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
+    } on SocketException {
+      _showSnackBar("서버에 연결할 수 없습니다. 나중에 다시 시도해주세요.");
+    } on HttpException {
+      _showSnackBar("아이디 또는 비밀번호가 올바르지 않습니다. ");
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed: $e')),
-      );
+      _showSnackBar("로그인 중 오류가 발생하였습니다. 다시 시도해주세요.");
     }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   @override

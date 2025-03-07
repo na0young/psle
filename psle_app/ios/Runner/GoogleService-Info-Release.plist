@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.honglab.psle.debug</string>
+	<string>org.honglab.psle</string>
 	<key>PROJECT_ID</key>
 	<string>psle-notification-2c637</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:253083339455:ios:65c00dbba2529f42fcd40a</string>
+	<string>1:253083339455:ios:c7ed4d3ccc28d814fcd40a</string>
 </dict>
 </plist>

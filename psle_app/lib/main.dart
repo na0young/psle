@@ -14,10 +14,6 @@ void main() async {
   await Firebase.initializeApp(); // Firebase Core 초기화
   tz.initializeTimeZones();
 
-  // FCM 초기화 -- login, home에서 개별적으로 초기화
-  //FirebaseMessagingService fcmService = FirebaseMessagingService();
-  //await fcmService.initialize();
-
   runApp(MyApp());
 }
 
@@ -48,7 +44,7 @@ class MyApp extends StatelessWidget {
           }
         },
       ),
-      debugShowCheckedModeBanner: false,
+      //debugShowCheckedModeBanner: false,
     );
   }
 }
